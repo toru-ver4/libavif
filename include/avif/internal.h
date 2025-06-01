@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+extern double g_manualBaseHdrHeadroom;
+extern double g_manualAlternateHdrHeadroom;
+
 #if defined(AVIF_DLL) && defined(AVIF_USING_STATIC_LIBS)
 #error "Your target is linking against avif and avif_internal: only one should be chosen"
 #endif

@@ -6,6 +6,8 @@
 #include <cmath>
 
 #include "avif/avif_cxx.h"
+#include "avif/avif.h"
+#include "avif/internal.h"
 #include "imageio.h"
 
 namespace avif {
@@ -50,6 +52,16 @@ CombineCommand::CombineCommand()
           "Set or override the cicp values for the alternate image, expressed "
           "as P/T/M  where P = color primaries, T = transfer characteristics, "
           "M = matrix coefficients.");
+  // New manual HDR headroom arguments
+  argparse_.add_argument<float>(arg_manualBaseHdrHeadroom_,
+                                "--manual-base-hdr-headroom")
+      .help("Manual base HDR headroom value")
+      .default_value("0.0");
+  argparse_.add_argument<float>(arg_manualAlternateHdrHeadroom_,
+                                "--manual-alternate-hdr-headroom")
+      .help("Manual alternate HDR headroom value")
+      .default_value("2.30");
+
   arg_image_encode_.Init(argparse_, /*can_have_alpha=*/true);
   arg_image_read_.Init(argparse_);
 }
@@ -110,6 +122,13 @@ avifResult CombineCommand::Run() {
   base_image->gainMap->image =
       avifImageCreate(gain_map_width, gain_map_height, arg_gain_map_depth_,
                       gain_map_pixel_format);
+
+  std::cout << "basehdrheadroom: " << arg_manualBaseHdrHeadroom_.value() << "\n";
+  std::cout << "alternatehdrheadroom: "
+            << arg_manualAlternateHdrHeadroom_.value() << "\n";
+  g_manualBaseHdrHeadroom = arg_manualBaseHdrHeadroom_.value();
+  g_manualAlternateHdrHeadroom = arg_manualAlternateHdrHeadroom_.value();
+
   if (base_image->gainMap->image == nullptr) {
     return AVIF_RESULT_OUT_OF_MEMORY;
   }

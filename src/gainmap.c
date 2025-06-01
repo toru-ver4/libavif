@@ -7,6 +7,9 @@
 #include <math.h>
 #include <string.h>
 
+double g_manualBaseHdrHeadroom = -1.0;
+double g_manualAlternateHdrHeadroom = -1.0;
+
 static void avifGainMapSetEncodingDefaults(avifGainMap * gainMap)
 {
     for (int i = 0; i < 3; ++i) {
@@ -694,8 +697,8 @@ avifResult avifRGBImageComputeGainMap(const avifRGBImage * baseRgbImage,
     }
 
     // Populate the gain map metadata's headrooms.
-    const double baseHeadroom = log2f(AVIF_MAX(baseMax, kEpsilon));
-    const double alternateHeadroom = log2f(AVIF_MAX(altMax, kEpsilon));
+    const double baseHeadroom = g_manualBaseHdrHeadroom;
+    const double alternateHeadroom = g_manualAlternateHdrHeadroom;
     if (!avifDoubleToUnsignedFraction(baseHeadroom, &gainMap->baseHdrHeadroom) ||
         !avifDoubleToUnsignedFraction(alternateHeadroom, &gainMap->alternateHdrHeadroom)) {
         res = AVIF_RESULT_INVALID_ARGUMENT;
